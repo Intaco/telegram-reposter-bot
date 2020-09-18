@@ -20,7 +20,7 @@ python main.py
 If you're looking for a always-restarting docker container please feel free to use the projects Dockerfile
 ```
 docker build -t reposter .
-docker container run --it --restart=always reposter
+docker container run --interactive --restart=always reposter
 ``` 
 
 ### After bot start you will be once prompted to enter your telegram credentials. After that, you can add `-d` flag to docker run command to start container in background
