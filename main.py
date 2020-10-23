@@ -22,22 +22,34 @@ client.start()
 
 dialogs = client.get_dialogs()
 
-TARGET_CHAT_NAME = os.environ['TARGET_CHAT_NAME']
-SOURCE_CHAT_NAMES = os.environ['SOURCE_CHAT_NAMES'].split(",,,") # in case you need multiple chats - split them by ,,,
+TARGET_CHAT_NAMES_LIST = os.environ['TARGET_CHAT_NAMES'].split(";;;")
+SOURCE_CHAT_NAMES_LIST = os.environ['SOURCE_CHAT_NAMES'].split(";;;")
 
-#print(list(map(lambda n: n.name, dialogs)))
-target_chat = list(filter(lambda d: str(d.name) == TARGET_CHAT_NAME, dialogs))[0]
-print("TARGET CHAT: {}".format(target_chat.name))
+if len(TARGET_CHAT_NAMES_LIST) != len(SOURCE_CHAT_NAMES_LIST):
+    quit()
 
-source_chats = list(filter(lambda d: str(d.name) in SOURCE_CHAT_NAMES, dialogs))
-source_chat_names = list(map(lambda c: c.name, source_chats))
-print("SRC CHATS: {}".format(source_chat_names))
+SOURCE_TARGET_CHAT_MAP = {}
+
+for i in range(0, len(TARGET_CHAT_NAMES_LIST)):
+    TARGET_CHAT_NAME = TARGET_CHAT_NAMES_LIST[i]
+    SOURCE_CHAT_NAMES = SOURCE_CHAT_NAMES_LIST[i].split(",,,")  # in case you need multiple chats - split them by ,,,
+
+    # print(list(map(lambda n: n.name, dialogs)))
+    target_chat = list(filter(lambda d: str(d.name) == TARGET_CHAT_NAME, dialogs))[0]
+    print("TARGET CHAT: {}".format(target_chat.name))
+
+    source_chats = list(filter(lambda d: str(d.name) in SOURCE_CHAT_NAMES, dialogs))
+    source_chat_names = list(map(lambda c: c.name, source_chats))
+    print("SRC CHATS: {}".format(source_chat_names))
+
+    for source_chat_id in source_chats:
+        SOURCE_TARGET_CHAT_MAP[source_chat_id] = target_chat
 
 @client.on(events.NewMessage(chats=source_chats))
 async def handler(event):
     if hasattr(event, 'message'):
         print(event)
-        await client.forward_messages(target_chat, event.message, event.chat_id)
+        await client.forward_messages(SOURCE_TARGET_CHAT_MAP[event.chat_id], event.message, event.chat_id)
 
 
 client.run_until_disconnected()
