@@ -8,4 +8,4 @@ COPY . /reposter
 WORKDIR /reposter
 RUN pipenv install --system --deploy --ignore-pipfile
 
-CMD ["python", "main.py"]
+CMD ["python", "-u", "main.py"]
