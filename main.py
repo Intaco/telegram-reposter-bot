@@ -53,10 +53,10 @@ for i in range(0, len(TARGET_CHAT_NAMES_LIST)):
 for key in SOURCE_TARGET_CHAT_MAP:
     print(key, '->', SOURCE_TARGET_CHAT_MAP[key])
 
-@client.on(events.NewMessage(chats=list(source_chats_set)))
+@client.on(events.NewMessage())
 async def handler(event):
-    print(event, '\n')
-    if hasattr(event, 'message'):
+    if hasattr(event, 'message') and event.chat_id in SOURCE_TARGET_CHAT_MAP:
+        print(event)
         for target_chat in SOURCE_TARGET_CHAT_MAP[event.chat_id]:
             await client.forward_messages(target_chat, event.message, event.chat_id)
 
